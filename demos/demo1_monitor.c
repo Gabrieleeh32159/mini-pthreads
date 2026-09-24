@@ -14,6 +14,7 @@
 #include <unistd.h>
 #include <signal.h>
 #include <sys/wait.h>
+#include <time.h>
 
 #define WORKERS 4
 #define ITERS   20000
@@ -72,7 +73,7 @@ static void run(int monitor)
     int status, waited = 0;
     for (int ms = 0; ms < 5000; ms += 10) {
         if (waitpid(pid, &status, WNOHANG) == pid) { waited = 1; break; }
-        usleep(10000);
+        nanosleep(&(struct timespec){0, 10000000L}, NULL);
     }
     if (!waited) {
         kill(pid, SIGKILL); waitpid(pid, &status, 0);
