@@ -39,5 +39,19 @@ make run      # ejecuta las tres demos
 make test     # autoverificación mínima de la librería
 ```
 
-Probado en macOS (Apple Silicon, clang) y debería compilar en Linux con gcc.
-Requiere `ucontext.h` (`-D_XOPEN_SOURCE=700`).
+Probado en macOS (Apple Silicon, clang 21) y en Linux (gcc 13, contenedor
+`gcc:13`). Requiere `ucontext.h` (`-D_XOPEN_SOURCE=700`).
+
+## Restricciones conocidas
+
+- Con el temporizador activo (`mpt_preempt_start`) los hilos no deben llamar a
+  `printf`, `malloc` ni otras funciones no reentrantes: un hilo puede ser
+  interrumpido a mitad de ellas y otro hilo volver a entrar. Por eso la demo 1
+  imprime desde el hilo principal después de `mpt_preempt_stop`.
+- La librería asume un solo procesador (como el paper): la exclusión mutua
+  interna es el monitor monolítico, no una instrucción atómica.
+
+## Análisis de factibilidad en Selfie
+
+Ver [`docs/selfie.md`](docs/selfie.md): qué componentes de Selfie habría que
+extender, las limitaciones principales y la versión simplificada implementable.
